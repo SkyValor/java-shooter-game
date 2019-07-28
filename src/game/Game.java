@@ -1,0 +1,1273 @@
+package game;
+
+import javax.swing.*;
+import javax.swing.Timer;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.geom.Line2D;
+import java.util.*;
+
+public class Game extends JPanel implements ActionListener {
+
+    private Background background;
+    private int score;
+    private Player player;
+    private boolean isPlayerLastRoom;
+    private boolean playerController;
+    private Boss boss;
+    private int bossShootingCount;
+
+    private Image beginningScreen;
+    private Image winningScreen;
+    private Image gameOverScreen;
+    private boolean gameStart;
+
+
+    private ArrayList<Enemy>    LIST_of_ENEMIES;
+    private ArrayList<Sentry>   LIST_of_SENTRIES;
+    private ArrayList<Wall>     LIST_of_WALLS;
+    private ArrayList<Crate>    LIST_of_CRATES;
+    private ArrayList<Pickable> LIST_of_PICKABLES;
+    private ArrayList<String>   LIST_of_possible_Pickables;   // this List contains Strings , which represent the possible outcomes
+    private ArrayList<Spikes>   LIST_of_SPIKES;
+
+
+    private ArrayList<Enemy>    list_of_enemies;
+    private ArrayList<Wall>     list_of_walls;
+    private ArrayList<Sentry>   list_of_sentries;
+    private ArrayList<Crate>    list_of_crates;
+    private ArrayList<Pickable> list_of_pickables;
+    private ArrayList<Spikes>   list_of_spikes;
+
+    private Timer timer;
+    private boolean pause;
+    private int currentTag, nextTag;
+
+
+    public Game(){
+        super.setFocusable(true);
+        super.setDoubleBuffered(true);
+        super.addKeyListener(new KeyboardAdapter());
+
+        background = new Background();
+        score = 0;
+        player = new Player (35,470);
+        playerController = false;
+        boss = new Boss();
+        isPlayerLastRoom = false;
+        bossShootingCount = 0;
+
+        ImageIcon WinIcon = new ImageIcon("src//Img//screens//vict2.png");
+        winningScreen = WinIcon.getImage();
+
+        ImageIcon LoseIcon = new ImageIcon("src//Img//screens//fail2.png");
+        gameOverScreen = LoseIcon.getImage();
+
+        ImageIcon StartIcon = new ImageIcon("src//Img//screens//start2.png");
+        beginningScreen = StartIcon.getImage();
+
+        gameStart = false;
+        player.setPlayerController(false);
+
+
+
+        LIST_of_ENEMIES = new ArrayList<>();
+        LIST_of_SENTRIES = new ArrayList<>();
+        LIST_of_WALLS = new ArrayList<>();
+        LIST_of_CRATES = new ArrayList<>();
+        LIST_of_PICKABLES = new ArrayList<>();
+        LIST_of_possible_Pickables = new ArrayList<>();
+        LIST_of_SPIKES = new ArrayList<>();
+
+
+
+
+        // nivel 1
+        LIST_of_ENEMIES.add(new Enemy("Down", 30, 150, 1, 1));
+        LIST_of_ENEMIES.get(0).addBehaviour("UpDown",    50);
+        LIST_of_ENEMIES.get(0).addBehaviour("DownRight", 210);
+        LIST_of_ENEMIES.get(0).addBehaviour("RightLeft", 245);
+        LIST_of_ENEMIES.get(0).addBehaviour("LeftUp",    30);
+
+        LIST_of_ENEMIES.add(new Enemy("Up", 410, 290, 1, 0));
+        LIST_of_ENEMIES.get(1).addBehaviour("UpDown",    150);
+        LIST_of_ENEMIES.get(1).addBehaviour("DownRight", 460);
+        LIST_of_ENEMIES.get(1).addBehaviour("RightUp",   600);
+        LIST_of_ENEMIES.get(1).addBehaviour("UpDown",    30);
+        LIST_of_ENEMIES.get(1).addBehaviour("DownLeft",  460);
+        LIST_of_ENEMIES.get(1).addBehaviour("LeftUp",    410);
+
+        LIST_of_ENEMIES.add(new Enemy("Down", 720, 135, 1, 1));
+        LIST_of_ENEMIES.get(2).addBehaviour("UpDown",    40);
+        LIST_of_ENEMIES.get(2).addBehaviour("DownUp",    185);
+
+        //nivel 2
+        LIST_of_ENEMIES.add(new Enemy("Up", 505, 400, 2, 0));
+        LIST_of_ENEMIES.get(3).addBehaviour("UpDown",    280);
+        LIST_of_ENEMIES.get(3).addBehaviour("DownUp",    450);
+
+        LIST_of_ENEMIES.add(new Enemy("Down", 40, 220, 2, 1));
+        LIST_of_ENEMIES.get(4).addBehaviour("UpDown",    35);
+        LIST_of_ENEMIES.get(4).addBehaviour("DownUp",    450);
+
+        LIST_of_ENEMIES.add(new Enemy("Right", 255, 35, 2, 1));
+        LIST_of_ENEMIES.get(5).addBehaviour("UpRight",   35);
+        LIST_of_ENEMIES.get(5).addBehaviour("RightLeft", 630);
+        LIST_of_ENEMIES.get(5).addBehaviour("LeftDown",  180);
+        LIST_of_ENEMIES.get(5).addBehaviour("DownUp",    190);
+
+        LIST_of_ENEMIES.add(new Enemy("Left", 570, 200, 2, 2));
+        LIST_of_ENEMIES.get(6).addBehaviour("UpDown",    105);
+        LIST_of_ENEMIES.get(6).addBehaviour("DownLeft",  200);
+        LIST_of_ENEMIES.get(6).addBehaviour("LeftRight", 560);
+        LIST_of_ENEMIES.get(6).addBehaviour("RightUp",   630);
+
+        // nivel 3
+        LIST_of_ENEMIES.add(new Enemy("Left", 250, 465, 3, 1));
+        LIST_of_ENEMIES.get(7).addBehaviour("RightLeft", 480 );
+        LIST_of_ENEMIES.get(7).addBehaviour("LeftRight", 210);
+
+        LIST_of_ENEMIES.add(new Enemy("Left", 100, 225, 3, 1));
+        LIST_of_ENEMIES.get(8).addBehaviour("RightLeft", 280);
+        LIST_of_ENEMIES.get(8).addBehaviour("LeftRight", 115);
+
+        LIST_of_ENEMIES.add(new Enemy("Down", 420, 230, 3, 1));
+        LIST_of_ENEMIES.get(9).addBehaviour("UpDown",    140);
+        LIST_of_ENEMIES.get(9).addBehaviour("DownUp",    280);
+
+        LIST_of_ENEMIES.add(new Enemy("Up", 760, 250, 3, 1));
+        LIST_of_ENEMIES.get(10).addBehaviour("DownUp",   370);
+        LIST_of_ENEMIES.get(10).addBehaviour("UpLeft",   50);
+        LIST_of_ENEMIES.get(10).addBehaviour("LeftDown", 535);
+        LIST_of_ENEMIES.get(10).addBehaviour("DownUp",   460);
+        LIST_of_ENEMIES.get(10).addBehaviour("UpRight",  50);
+        LIST_of_ENEMIES.get(10).addBehaviour("RightDown",760);
+
+
+        //sentries
+
+        // nivel 1
+        LIST_of_SENTRIES.add(new Sentry(335, 460, 1, "Vertical"));
+        LIST_of_SENTRIES.add(new Sentry(775, 463, 1, "Vertical"));
+
+        // nivel 2
+        LIST_of_SENTRIES.add(new Sentry(335, 463, 2, "Vertical"));
+        LIST_of_SENTRIES.add(new Sentry(760, 30,  2, "Horizontal"));
+        LIST_of_SENTRIES.add(new Sentry(760, 190, 2, "Horizontal"));
+        LIST_of_SENTRIES.add(new Sentry(630, 300, 2, "Vertical"));
+
+        // nivel 3
+        LIST_of_SENTRIES.add(new Sentry(310, 50,  3, "Vertical"));
+        LIST_of_SENTRIES.add(new Sentry(200, 295, 3, "Horizontal"));
+        LIST_of_SENTRIES.add(new Sentry(760, 445, 3, "Vertical"));
+
+
+        // walls
+
+        // nivel 1
+        LIST_of_WALLS.add(new Wall(23,  297, 300, 20,  1));
+        LIST_of_WALLS.add(new Wall(91,  396, 57,  20,  1));
+        LIST_of_WALLS.add(new Wall(128, 416, 20,  111, 1));
+        LIST_of_WALLS.add(new Wall(136, 131, 277, 20,  1));
+        LIST_of_WALLS.add(new Wall(393, 151, 20,  376, 1));
+        LIST_of_WALLS.add(new Wall(472, 289, 120, 20,  1));
+        LIST_of_WALLS.add(new Wall(472, 309, 20,  112, 1));
+        LIST_of_WALLS.add(new Wall(572, 318, 20,  103, 1));
+        LIST_of_WALLS.add(new Wall(683, 22,  20,  270, 1));
+        LIST_of_WALLS.add(new Wall(683, 272, 87,  20,  1));
+        LIST_of_WALLS.add(new Wall(0,   -23, 726, 45,  1));
+        LIST_of_WALLS.add(new Wall(0,   -23, 23,  573, 1));
+        LIST_of_WALLS.add(new Wall(0,   527, 828, 23,  1));
+        LIST_of_WALLS.add(new Wall(804, -23, 24,  45,  1));
+        LIST_of_WALLS.add(new Wall(828, -23, 22,  573, 1));
+
+        // nivel 2
+        LIST_of_WALLS.add(new Wall(658, 370, 20,  157, 2));
+        LIST_of_WALLS.add(new Wall(351, 284, 20,  161, 2));
+        LIST_of_WALLS.add(new Wall(104, 264, 724, 20,  2));
+        LIST_of_WALLS.add(new Wall(377, 112, 20,  152, 2));
+        LIST_of_WALLS.add(new Wall(377, 112, 262, 20,  2));
+        LIST_of_WALLS.add(new Wall(619, 112, 20,  99,  2));
+        LIST_of_WALLS.add(new Wall(448, 191, 191, 20,  2));
+        LIST_of_WALLS.add(new Wall(694, 78,  134, 20,  2));
+        LIST_of_WALLS.add(new Wall(694, 152, 134, 20,  2));
+        LIST_of_WALLS.add(new Wall(0,   0,   850, 22,  2));
+        LIST_of_WALLS.add(new Wall(0,   22,  23,  528, 2));
+        LIST_of_WALLS.add(new Wall(0,   527, 726, 45,  2));
+        LIST_of_WALLS.add(new Wall(804, 527, 24,  45,  2));
+        LIST_of_WALLS.add(new Wall(828, 22,  45,  76,  2));
+        LIST_of_WALLS.add(new Wall(828, 152, 22,  398, 2));
+
+        // nivel 3
+        LIST_of_WALLS.add(new Wall(22,  187, 246, 19,  3));
+        LIST_of_WALLS.add(new Wall(22,  345, 491, 19,  3));
+        LIST_of_WALLS.add(new Wall(272, 21,  19,  115, 3));
+        LIST_of_WALLS.add(new Wall(291, 116, 160, 20,  3));
+        LIST_of_WALLS.add(new Wall(494, 117, 19,  247, 3));
+        LIST_of_WALLS.add(new Wall(341, 201, 76,  90,  3));
+        LIST_of_WALLS.add(new Wall(601, 150, 148, 271, 3));
+        LIST_of_WALLS.add(new Wall(101, 259, 19,  86,  3));
+        LIST_of_WALLS.add(new Wall(0,   0,   22,  97,  3));
+        LIST_of_WALLS.add(new Wall(0,   0,   850, 21,  3));
+        LIST_of_WALLS.add(new Wall(0,   152, 22,  419, 3));
+        LIST_of_WALLS.add(new Wall(22,  527, 28,  44,  3));
+        LIST_of_WALLS.add(new Wall(132, 527, 718, 44,  3));
+        LIST_of_WALLS.add(new Wall(827, 0,   23,  517, 3));
+
+        // nivel 4
+        LIST_of_WALLS.add(new Wall(90,  130, 28,  15,  4));
+        LIST_of_WALLS.add(new Wall(240, 336, 28,  33,  4));
+        LIST_of_WALLS.add(new Wall(90,  425, 28,  33,  4));
+        LIST_of_WALLS.add(new Wall(240, 177, 28,  33,  4));
+        LIST_of_WALLS.add(new Wall(394, 101, 28,  33,  4));
+        LIST_of_WALLS.add(new Wall(394, 421, 28,  33,  4));
+        LIST_of_WALLS.add(new Wall(563, 177, 28,  33,  4));
+        LIST_of_WALLS.add(new Wall(563, 328, 28,  33,  4));
+        LIST_of_WALLS.add(new Wall(697, 113, 28,  33,  4));
+        LIST_of_WALLS.add(new Wall(697, 430, 28,  33,  4));
+        LIST_of_WALLS.add(new Wall(0,   0,   850, 22,  4));
+        LIST_of_WALLS.add(new Wall(0,   0,   22,  550, 4));
+        LIST_of_WALLS.add(new Wall(0,   528, 850, 22,  4));
+        LIST_of_WALLS.add(new Wall(827, 22,  23,  528, 4));
+
+
+        //crates
+
+        // nivel 1
+        LIST_of_CRATES.add(new Crate(91,  417, 1));
+        LIST_of_CRATES.add(new Crate(152, 490, 1));
+        LIST_of_CRATES.add(new Crate(494, 309, 1));
+        LIST_of_CRATES.add(new Crate(539, 311, 1));
+        LIST_of_CRATES.add(new Crate(494, 349, 1));
+        LIST_of_CRATES.add(new Crate(539, 349, 1));
+
+        // nivel 2
+        LIST_of_CRATES.add(new Crate(171, 489, 2));
+        LIST_of_CRATES.add(new Crate(400, 133, 2));
+        LIST_of_CRATES.add(new Crate(447, 133, 2));
+        LIST_of_CRATES.add(new Crate(494, 156, 2));
+        LIST_of_CRATES.add(new Crate(584, 156, 2));
+        LIST_of_CRATES.add(new Crate(538, 227, 2));
+        LIST_of_CRATES.add(new Crate(699, 108, 2));
+
+        // nivel 3
+        LIST_of_CRATES.add(new Crate(27,  24,  3));
+        LIST_of_CRATES.add(new Crate(30,  309, 3));
+        LIST_of_CRATES.add(new Crate(66,  309, 3));
+        LIST_of_CRATES.add(new Crate(157, 454, 3));
+        LIST_of_CRATES.add(new Crate(158, 491, 3));
+        LIST_of_CRATES.add(new Crate(381, 366, 3));
+
+
+        // spikes
+
+        // nivel 1
+        LIST_of_SPIKES.add(new Spikes(524, 149, 1));
+
+        // nivel 2
+        LIST_of_SPIKES.add(new Spikes(224, 352, 2));
+        LIST_of_SPIKES.add(new Spikes(406, 183, 2));
+
+        // nivel 3
+        LIST_of_SPIKES.add(new Spikes(178, 262, 3));
+        LIST_of_SPIKES.add(new Spikes(452, 368, 3));
+
+
+        // pickables
+        LIST_of_possible_Pickables.add("Rocket");
+        LIST_of_possible_Pickables.add("Rocket");
+        LIST_of_possible_Pickables.add("Battery");
+        LIST_of_possible_Pickables.add("Battery");
+        LIST_of_possible_Pickables.add("Megaphone");
+        LIST_of_possible_Pickables.add("Bazooka");
+        LIST_of_possible_Pickables.add("Cross");
+        LIST_of_possible_Pickables.add("Cross");
+        LIST_of_possible_Pickables.add("Cross");
+        LIST_of_possible_Pickables.add("Cross");
+
+
+        list_of_enemies = new ArrayList<>();
+        list_of_sentries = new ArrayList<>();
+        list_of_walls = new ArrayList<>();
+        list_of_crates = new ArrayList<>();
+        list_of_pickables = new ArrayList<>();
+        list_of_spikes = new ArrayList<>();
+
+
+        timer = new Timer(5, this);
+        timer.start();
+
+        pause = false;
+        currentTag = 1;
+        nextTag = 0;
+        updateObjectsByTag(currentTag);
+    }
+
+
+    // colisao com paredes e crates
+    private boolean isMovementPossible() {
+
+        for (Wall wall : list_of_walls) {   // checks all WALLS
+
+                if (wall.getRectangle().intersects(player.getTranslatedRectangle()))
+                    return false;
+
+        }
+
+        for (Crate crate : list_of_crates) {    // checks all CRATES
+
+                if (crate.getRectangle().intersects(player.getTranslatedRectangle()))
+                    return false;
+
+        }
+
+        return true;
+    }
+
+
+    // ver se há paredes entre enemy e player
+    private void checkPlayerEnemyDistance(Enemy enemy) {
+
+        // calculate distance between PLAYER and ENEMY
+        double distance = Math.sqrt(Math.pow( (player.getX() + 35) - (enemy.getX() + 35), 2)
+                                  + Math.pow( (player.getY() + 35) - (enemy.getY() + 35), 2));
+
+
+        // if PLAYER and ENEMY are closer than 300 units
+        if (distance < 300) {
+            boolean check = checkPlayerEnemyWallObstruction(enemy); // checks to know if there is at least a wall between the two
+
+            if (check)  // if there is, the ENEMY does not Lock-on the PLAYER
+                enemy.setPlayerLockOn(false);
+
+            else        // else, the ENEMY Locks-on the PLAYER
+                enemy.setPlayerLockOn(true);
+        }
+
+        // if the PLAYER and ENEMY are not closer than 300 units , the ENEMY does not Lock-on the PLAYER
+        else
+            enemy.setPlayerLockOn(false);
+    }
+
+
+    // method for checking whether or not PLAYER and SENTRY are close by
+    private void checkPlayerSentryDistance(Sentry sentry) {
+
+        // calculate distance between PLAYER and ENEMY
+        double distance = Math.sqrt(Math.pow( (player.getX() + 35) - (sentry.getX() + 35), 2)
+                + Math.pow( (player.getY() + 35) - (sentry.getY() + 35), 2));
+
+
+        // if PLAYER and ENEMY are closer than 300 units
+        if (distance < 300)
+            sentry.setPlayerLockOn(true);
+
+            // if the PLAYER and ENEMY are not closer than 300 units , the ENEMY does not Lock-on the PLAYER
+        else
+            sentry.setPlayerLockOn(false);
+    }
+
+
+    // method for drawing a line between ENEMY and PLAYER and seeing if intersects any wall
+    private boolean checkPlayerEnemyWallObstruction(Enemy enemy) {
+
+        // a line is drawn between the ENEMY and the PLAYER
+        Line2D.Float line = new Line2D.Float(player.getRectX() + 35, player.getRectY() + 35,
+                                             enemy.getRectX() + 35,  enemy.getRectY() + 35);
+
+        // check if the line INTERSECTS with any RECTANGLE
+        for (Wall wall : list_of_walls) {
+
+            if (line.intersects(wall.getRectangle()))
+                return true;
+        }
+        return false;
+    }
+
+//.....
+    // method for checking the area that the PLAYER needs to be in order to transition to another map
+    private void checkMapTransition() {
+
+        if (!pause) {   // 'pause' garanties that transitioning is happening.
+            // Therefore, this does not happen repeatedly
+            switch (currentTag) {
+
+                case 1:
+                    if ((player.getRectX() > 725 && player.getRectX() < 770) && (player.getRectY() < 30)) {
+                        pause = true;
+                        nextTag = 2;
+                    }
+                    break;
+
+                case 2:
+                    // transition to TAG = 1
+                    if ((player.getRectX() > 725 && player.getRectX() < 805) && (player.getRectY() > 520 - 20)) {
+                        pause = true;
+                        nextTag = 1;
+                    }
+
+                    // transition to TAG = 3
+                    if ((player.getRectX() > 850 - 30) && (player.getRectY() > 98 && player.getRectY() < 153)) {
+                        pause = true;
+                        nextTag = 3;
+                    }
+                    break;
+
+                case 3:
+                    // transition to TAG = 2
+                    if ((player.getRectX() < 30) && (player.getRectY() > 98 && player.getRectY() < 115)) {
+                        pause = true;
+                        nextTag = 2;
+                    }
+
+                    // transition to TAG = 4
+                    if ((player.getRectX() > 50 && player.getRectX() < 132) && (player.getRectY() > 550 - 20)) {
+                        pause = true;
+                        nextTag = 4;
+                    }
+                    break;
+            }
+        }
+
+        // when 'pause' is TRUE , the PLAYER and BACKGROUND are moved according to the TAGS
+        if (pause)
+            changeMapTo(currentTag, nextTag);
+    }
+
+
+    // method for updating the TAGS after transition is complete
+    private void updateTags(int newCurrent) {
+
+        this.pause = false;
+        this.currentTag = newCurrent;
+        this.nextTag = 0;
+    }
+
+
+    // method that executes the movement of the BACKGROUND and the PLAYER
+    private void changeMapTo(int currentTag, int nextTag) {
+        list_of_enemies.clear();
+        list_of_sentries.clear();
+        list_of_walls.clear();
+        list_of_crates.clear();
+        list_of_pickables.clear();
+        list_of_spikes.clear();
+
+
+        switch (currentTag) {
+
+            case 1:
+
+                // background is pushed DOWNWARDS -- Player is pushed a little less
+                if (pause && (background.getY() != 0)) {
+                    background.push(0, 5);
+                    player.push(0, 4);
+                    player.setPlayerController(false);
+
+                    // when that is complete, this happens
+                    if (background.getY() == 0) {
+                        updateTags(2);
+                        updateObjectsByTag(this.currentTag);
+                        player.setPlayerController(true);
+                    }
+                }
+                break;
+
+            case 2:
+                if (nextTag == 1) {
+
+                    // background is pushed UPWARDS -- Player is pushed a little less
+                    if (pause && (background.getY() != -background.getHeight() / 2)) {
+                        background.push(0, -5);
+                        player.push(0, -4);
+                        player.setPlayerController(false);
+
+                        // when that is complete, this happens
+                        if (background.getY() == -background.getHeight() / 2) {
+                            updateTags(1);
+                            updateObjectsByTag(this.currentTag);
+                            player.setPlayerController(true);
+                        }
+                    }
+                }
+
+                if (nextTag == 3) {
+
+                    // background is pushed LEFTWARD -- Player is pushed a little less
+                    if (pause && (background.getX() != -(background.getWidth() / 2))) {
+                        background.push(-5, 0);
+                        player.push(-4, 0);player.setPlayerController(false);
+
+                        // when that is complete, this happens
+                        if (background.getX() == -(background.getWidth() / 2)) {
+                            updateTags(3);
+                            updateObjectsByTag(this.currentTag);
+                            player.setPlayerController(true);
+                        }
+                    }
+                }
+                break;
+
+            case 3:
+                if (nextTag == 2) {
+
+                    // background is pushed RIGHTWARD -- Player is pushed a little less
+                    if (pause && (background.getX() != 0)) {
+                        background.push(5, 0);
+                        player.push(4, 0);
+                        player.setPlayerController(false);
+
+                        // when that is complete, this happens
+                        if (background.getX() == 0) {
+                            updateTags(2);
+                            updateObjectsByTag(this.currentTag);
+                            player.setPlayerController(true);
+                        }
+                    }
+                }
+
+                if (nextTag == 4) {
+
+                    // background is pushed UPWARDS -- Player is pushed a little less
+                    if (pause && (background.getY() != -(background.getHeight() / 2))) {
+                        background.push(0, -5);
+                        player.push(0, -4);
+                        player.setPlayerController(false);
+
+                        // when that is complete, this happens
+                        if (background.getY() == -(background.getHeight() / 2)) {
+                            updateTags(4);
+                            updateObjectsByTag(this.currentTag);
+
+                            player.getList_Missiles().clear();
+                            player.getList_MG().clear();
+                            player.getList_Beams().clear();
+
+                            isPlayerLastRoom = true;
+                            player.setPlayerController(true);
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+
+    private void updateObjectsByTag(int tag) {
+
+
+
+        // activate ENEMIES
+        for (Enemy enemy : LIST_of_ENEMIES) {
+            if (enemy.getTag() == tag)
+                list_of_enemies.add(enemy);
+        }
+
+        // activate SENTRIES
+        for (Sentry sentry : LIST_of_SENTRIES) {
+            if (sentry.getTAG() == tag)
+                list_of_sentries.add(sentry);
+        }
+
+        // activate WALLS
+        for (Wall wall : LIST_of_WALLS) {
+            if (wall.getTAG() == tag)
+                list_of_walls.add(wall);
+        }
+
+        // activate CRATES
+        for (Crate crate : LIST_of_CRATES) {
+            if (crate.getTag() == tag)
+                list_of_crates.add(crate);
+        }
+
+        // activate PICKABLES
+        for (Pickable pickable : LIST_of_PICKABLES) {
+            if (pickable.getTAG() == tag)
+                list_of_pickables.add(pickable);
+        }
+
+        // activate SPIKES
+        for (Spikes spikes : LIST_of_SPIKES) {
+            if (spikes.getTAG() == tag)
+                list_of_spikes.add(spikes);
+        }
+    }
+//........
+
+    // method that spawns a random Pickable
+    private void spawnRandomPickable(int crateX, int crateY) {
+        if (LIST_of_possible_Pickables.size()>0) {
+
+            Random rand = new Random();         // will be used to generate random values
+            boolean b = rand.nextBoolean();     // returns a random true or false
+
+
+        // if number of possible Picks is equal to the current number of crates , a Pick must be spawned
+        // or if the random boolean is true
+
+           if ((LIST_of_possible_Pickables.size() == list_of_crates.size()) || b) {
+
+               // determine the maximum and minimal values for the index of the List
+               int maxIndex = LIST_of_possible_Pickables.size() - 1;
+               int minIndex = 0;
+               int randomIndex = rand.nextInt(maxIndex - minIndex + 1) + minIndex;     // nextInt(max - min + 1) + min
+
+               // spawn the new Pickable and attach it to this TAG
+               // also, add it to the corresponding Lists
+               LIST_of_PICKABLES.add(new Pickable(LIST_of_possible_Pickables.get(randomIndex), crateX, crateY, currentTag));
+               list_of_pickables.add(LIST_of_PICKABLES.get(LIST_of_PICKABLES.size() - 1));
+
+               // lastly , remove the said Pickable from its previous List
+               LIST_of_possible_Pickables.remove(randomIndex);
+           }
+       }
+    }
+
+
+    // method for collision between bullets and characters
+    private void checkBulletCollision() {
+
+        // check all PLAYER's Machine Gun Bullets -- Machine Gun deals 25 damage
+        for (MachineGunBeam mg_beam : player.getList_MG()) {
+
+            // against all WALLS
+            for (Wall wall : list_of_walls) {
+                if (mg_beam.getRectangle().intersects(wall.getRectangle())) {
+                    player.getList_MG().remove(mg_beam);                        // eliminate access to bullet
+                    return;
+                }
+            }
+
+
+            // against all ENEMIES
+            Enemy toRemoveEnemy = null;
+            for (Enemy enemy : list_of_enemies) {
+                if (mg_beam.getRectangle().intersects(enemy.getRectangle())) {
+                    enemy.setHP(-25);
+
+                    if (enemy.getHP() <=0)
+                        toRemoveEnemy = enemy;
+
+                    player.getList_MG().remove(mg_beam);        // eliminate access to bullet
+                    LIST_of_ENEMIES.remove(toRemoveEnemy);
+                    list_of_enemies.remove(toRemoveEnemy);
+                    return;
+                }
+            }
+
+
+            // against all SENTRIES
+            Sentry toRemoveSentry = null;            // removes the sentry from list to kill it
+            for (Sentry sentry : list_of_sentries) {
+                if (mg_beam.getRectangle().intersects(sentry.getRectangle())) {
+                    sentry.setHP(-25);
+
+                    // destroy the sentry if HP is 0 or less
+                    if (sentry.getHP() <= 0)
+                        toRemoveSentry = sentry;
+
+                    player.getList_MG().remove(mg_beam);        // eliminate access to bullet
+                    LIST_of_SENTRIES.remove(toRemoveSentry);    // eliminate access to LIST
+                    list_of_sentries.remove(toRemoveSentry);    // eliminate access to list
+                    return;
+                }
+            }
+
+            // against the BOSS
+            if (mg_beam.getRectangle().intersects(boss.getRectangle())) {
+                boss.setHP(-25);
+
+                // destroy the BOSS if HP is 0 or less
+                if (boss.getHP() <= 0)
+                    boss.eraseBoss();                           // garanties the erasure of Image and Rectangle
+
+                player.getList_MG().remove(mg_beam);            // eliminate access to bullet
+                return;
+            }
+
+            // against all CRATES
+            Crate toRemoveCrate = null;            // removes the crate from list to destroy it
+            for (Crate crate : list_of_crates) {
+                if (mg_beam.getRectangle().intersects(crate.getRectangle())) {
+                    crate.setHP(-25);
+
+                    // destroy the crate if HP is 0 or less
+                    if (crate.getHP() <= 0) {
+                        toRemoveCrate = crate;
+
+                        spawnRandomPickable(crate.getX(), crate.getY());    // spawn a random Pickable in this position
+                    }
+
+                    player.getList_MG().remove(mg_beam);      // eliminate access to bullet
+                    LIST_of_CRATES.remove(toRemoveCrate);     // eliminate access to LIST
+                    list_of_crates.remove(toRemoveCrate);     // eliminate access to list
+                    return;
+                }
+            }
+        }
+
+        // check all PLAYER's Megaphone Bullets -- Megaphone doesn't do damage. Instead, deals slow-debuff
+        for (MegaphoneBeam megaBeam : player.getList_Beams()) {
+
+            // against all WALLS
+            for (Wall wall : list_of_walls) {
+                if (megaBeam.getRectangle().intersects(wall.getRectangle())) {
+                    player.getList_Beams().remove(megaBeam);                        // eliminate access to bullet
+                    return;
+                }
+            }
+
+            // against all ENEMIES
+            for (Enemy enemy : list_of_enemies) {
+                if (megaBeam.getRectangle().intersects(enemy.getRectangle())) {
+                    enemy.setSlowDebuff();  // ENEMY gets slowed
+
+                    player.getList_Beams().remove(megaBeam);    // eliminate access to bullet
+                    return;
+                }
+            }
+
+            // against all SENTRIES
+            for (Sentry sentry : list_of_sentries) {
+                if (megaBeam.getRectangle().intersects(sentry.getRectangle())) {
+                    sentry.setSlowDebuff(); // SENTRY gets slowed
+
+                    player.getList_Beams().remove(megaBeam);    // eliminate access to bullet
+                    return;
+                }
+            }
+
+            // against all CRATES
+            for (Crate crate : list_of_crates) {
+                if (megaBeam.getRectangle().intersects(crate.getRectangle())) {
+                    // nothing happens here
+
+                    player.getList_Beams().remove(megaBeam);    // eliminate access to bullet
+                    return;
+                }
+            }
+        }
+
+        // checks all PLAYER's Bazooka Bullets -- Bazooka deals 250 damage
+        for (BazookaBeam missile : player.getList_Missiles()) {
+
+            // against all WALLS
+            for (Wall wall : list_of_walls) {
+                if (missile.getRectangle().intersects(wall.getRectangle())) {
+                    player.getList_Missiles().remove(missile);                        // eliminate access to bullet
+                    return;
+                }
+            }
+
+            // against all ENEMIES
+            Enemy toRemoveMinion = null;            // removes the ENEMY from list to kill it
+            for (Enemy enemy : list_of_enemies) {
+                if (missile.getRectangle().intersects(enemy.getRectangle())) {
+                    enemy.setHP(-250);
+
+                    // destroy the ENEMY if HP is 0 or less
+                    if (enemy.getHP() <= 0)
+                        toRemoveMinion = enemy;
+
+                    player.getList_Missiles().remove(missile);  // eliminate access to bullet
+                    LIST_of_ENEMIES.remove(toRemoveMinion);     // eliminate access to LIST
+                    list_of_enemies.remove(toRemoveMinion);     // eliminate access to list
+                    return;
+                }
+            }
+
+            // against all SENTRIES
+            Sentry toRemoveSentry = null;            // removes the SENTRY from list to kill it
+            for (Sentry sentry : list_of_sentries) {
+                if (missile.getRectangle().intersects(sentry.getRectangle())) {
+                    sentry.setHP(-250);
+
+                    // destroy the SENTRY if HP is 0 or less
+                    if (sentry.getHP() <= 0)
+                        toRemoveSentry = sentry;
+
+                    player.getList_Missiles().remove(missile);  // eliminate access to bullet
+                    LIST_of_SENTRIES.remove(toRemoveSentry);    // eliminate access to LIST
+                    list_of_sentries.remove(toRemoveSentry);    // eliminate access to list
+                    return;
+                }
+            }
+
+            // against the BOSS
+            if (missile.getRectangle().intersects(boss.getRectangle())) {
+                boss.setHP(-250);
+
+                // destroy the BOSS if HP is 0 or less
+                if (boss.getHP() <= 0)
+                    boss.eraseBoss();                           // garanties the erasure of Image and Rectangle
+
+                player.getList_Missiles().remove(missile);            // eliminate access to bullet
+                return;
+            }
+
+            // against all CRATES
+            Crate toRemoveCrate = null;
+            for (Crate crate : list_of_crates) {
+                if (missile.getRectangle().intersects(crate.getRectangle())) {
+                    crate.setHP(-250);
+
+                    // destroy the crate if HP is 0 or less
+                    if (crate.getHP() <= 0) {
+                        toRemoveCrate = crate;
+
+                        spawnRandomPickable(crate.getX(), crate.getY());    // spawn a random Pickable in this position
+                    }
+
+                    player.getList_Missiles().remove(missile);
+                    LIST_of_CRATES.remove(toRemoveCrate);
+                    list_of_crates.remove(toRemoveCrate);
+                    return;
+                }
+            }
+        }
+
+        // check all ENEMIES' EnemyBullets
+        for (Enemy enemy : list_of_enemies) {
+            for (EnemyBullet bullet : enemy.getList_bullets()) {
+
+                // against the PLAYER
+                if (bullet.getRectangle().intersects(player.getRectangle())) {
+                    player.setHP(-50);
+                    enemy.getList_bullets().remove(bullet);     // eliminate access to bullet
+                    return;
+                }
+
+                // against all WALLS
+                for (Wall wall : list_of_walls) {
+
+                    if (bullet.getRectangle().intersects(wall.getRectangle())) {
+                        enemy.getList_bullets().remove(bullet); // eliminate access to bullet
+                        return;
+                    }
+                }
+            }
+        }
+
+        // check all SENTRIES' EnemyBullets
+        ArrayList<EnemyBullet> toRemoveSentryBullets = new ArrayList<>();
+        for (Sentry sentry : list_of_sentries) {
+            for (EnemyBullet bullet : sentry.getList_bullets()) {
+
+                // against the PLAYER
+                if (bullet.getRectangle().intersects(player.getRectangle())) {
+                    player.setHP(-25);
+                    toRemoveSentryBullets.add(bullet);
+                }
+            }
+
+            // remove bullets , if there are any
+            if (toRemoveSentryBullets.size() > 0) {
+
+                sentry.getList_bullets().removeAll(toRemoveSentryBullets);  // eliminate access to bullets
+                return;
+            }
+        }
+
+        // check all BOSS EnemyBullets
+        ArrayList<EnemyBullet> toRemoveBossBullets = new ArrayList<>();
+        for (EnemyBullet bullet : boss.getListBullets()) {
+
+            // against the PLAYER
+            if (bullet.getRectangle().intersects(player.getRectangle())) {
+                player.setHP(-25);
+                toRemoveBossBullets.add(bullet);
+            }
+        }
+        boss.getListBullets().removeAll(toRemoveBossBullets);
+
+    }
+
+
+    // method for collision with Pickables
+    private void checkPlayerPickableCollision() {
+
+        for (Pickable pickable : list_of_pickables) {
+
+            Pickable toRemovePickable = null;       // is used to destroy the Pickable , if it's case
+            if (pickable.getRectangle().intersects(player.getRectangle())) {
+
+                switch (pickable.getType()) {
+
+                    case "Cross":
+                        if (player.getHp() != 100) {
+                            player.maxHP();                 // maximizes PLAYER's HP
+                            toRemovePickable = pickable;
+                            score += 100;
+                        }
+                        break;
+
+                    case "Megaphone":
+                        player.activateMegaphone();      // PLAYER can now swap weapon to Megaphone
+                        toRemovePickable = pickable;
+                        score += 100;
+                        break;
+
+                    case "Battery":
+                        if (player.getMegaphone()) {
+                            player.setMegaAmmo(2);      // Battery gives 2 Megaphone ammo
+                            toRemovePickable = pickable;
+                            score += 100;
+                        }
+                        break;
+
+                    case "Bazooka":
+                        player.activateBazooka();        // PLAYER can now swap weapon to Bazooka
+                        toRemovePickable = pickable;
+                        score += 100;
+                        break;
+
+                    default:
+                        if (player.getBazooka()) {
+                            player.setBazookaAmmo(2);       // Rocket gives 2 Bazooka ammo
+                            toRemovePickable = pickable;
+                            score += 100;
+                        }
+                }
+
+                LIST_of_PICKABLES.remove(toRemovePickable); // eliminate access to LIST
+                list_of_pickables.remove(toRemovePickable); // eliminate access to list
+
+
+                // end method early if collision was found
+                if (toRemovePickable != null)
+                    return;
+            }
+        }
+    }
+
+
+    // method for collision with Spikes
+    private void checkPlayerSpikesCollision() {
+
+        // checking all SPIKES
+        for (Spikes spikes : list_of_spikes) {
+
+            if (!spikes.getVisible()) {     // only verifies collision if it's not visible
+
+                if (spikes.getRectangle().intersects(player.getRectangle())) {
+
+                    player.setHP(-50);
+                    spikes.setVisible();    // SPIKES become visible and obsolete
+                }
+            }
+        }
+    }
+
+
+    // method for managing the AI for Boss
+    private void managerAIBoss() {
+
+        // happens until BOSS starts
+
+        if (!boss.getStartingActive()) {
+
+            // if Player shoots , BOSS starts
+            if (player.getList_MG().size() > 0 || player.getList_Beams().size() > 0 || player.getList_Missiles().size() > 0) {
+                boss.commenceBattle();
+                boss.setActive();
+                return;
+
+            }
+
+            // else , Boss sleeps
+            else {
+                boss.updateImageByHP();
+                return;
+            }
+        }
+
+
+    // always have the image updated , based on current HP
+        boss.updateImageByHP();
+
+
+        if (boss.getActive()) {                 // if BOSS is activated
+            if (boss.getHP() > 1000) {              // if HP is higher than 50%
+
+            if (!boss.getPastHalf()) {              // if it's pre-waiting the 0.5 seconds
+                boss.teleportToNewWaypoint();           // teleport to new Waypoint
+                boss.waitHalfSecond();                  // wait 0.5 seconds
+            }
+
+            else {                                      // after waiting 0.5 seconds
+                boss.shoot();                               // BOSS shoots once
+                boss.wait2Seconds();                        // waits 2 seconds
+            }
+
+        }
+
+        else {                                // if HP is 50% or lower
+
+            if (!boss.getPastTeleport()) {          // if Teleport is yet to happen
+                boss.teleportToNewWaypoint();           // teleport to new Waypoint
+                boss.setPastTeleport(true);             // make sure Teleport does not happen until next cycle
+            }
+
+            else if (bossShootingCount < 3) {       // if 3 shootings haven't happened yet
+
+                boss.shoot();                           // BOSS shoots
+                bossShootingCount++;                    // counter increments
+                boss.waitHalfSecond();                  // wait 0.5 seconds
+            }
+
+            else {                                  // after the first two waves
+                                      // BOSS shoots
+                boss.wait2Seconds();                    // wait 2 seconds
+                boss.setPastTeleport(false);            // Teleport can now happen
+                bossShootingCount = 0;                  // reset the counter
+            }
+        }
+    }
+}
+
+
+    @Override
+    public void paint (Graphics g) {
+
+        Graphics2D g2d = (Graphics2D) g;
+
+        // BACKGROUND
+        g2d.drawImage(background.getImg(), background.getX(), background.getY(), null);
+
+
+        // HUD LIFE / SCORE
+        g2d.drawString("Life points: " + String.valueOf(player.getHp()), 400, 15);
+        g2d.drawString("Score: " + String.valueOf(score), 30, 15);
+        g2d.drawString("Weapon: " + String.valueOf(player.getWeaponType()), 120, 15);
+
+        checkPlayerSpikesCollision();
+        checkPlayerPickableCollision();
+        checkBulletCollision();
+        checkMapTransition();
+
+        if (isPlayerLastRoom && boss.getHP() > 0)
+            managerAIBoss();
+
+
+
+
+
+        // SPIKES
+        for (Spikes spikes : list_of_spikes) {
+
+            if (spikes.getVisible()) {
+                g2d.drawImage(spikes.getImage(), spikes.getX(), spikes.getY(), this);
+            }
+        }
+
+
+        // CRATES
+        for (Crate crate : list_of_crates) {
+            g2d.drawImage(crate.getImage(), crate.getX(), crate.getY(), this);
+        }
+
+
+        // PICKABLES
+        for (Pickable pickable : list_of_pickables) {
+            g2d.drawImage(pickable.getImage(), pickable.getX(), pickable.getY(), this);
+        }
+
+        // PLAYER
+        if (!pause) {
+            if (playerController)
+                if (isMovementPossible())
+                player.move();
+        }
+        g2d.drawImage(player.getImage(), player.getX(), player.getY(), null);
+
+
+        // MEGAPHONE BULLETS
+
+        for (MegaphoneBeam beam : player.getList_Beams()) {
+
+            g2d.drawImage(beam.getImage(), beam.getX(), beam.getY(), this);
+
+
+
+        }
+
+
+
+        // MACHINE GUN BULLETS
+
+        for (MachineGunBeam beam : player.getList_MG()) {
+
+            g2d.drawImage(beam.getImage(), beam.getX(), beam.getY(), this);
+
+
+
+        }
+
+
+
+        // MISSILES BULLETS
+
+        for (BazookaBeam missile : player.getList_Missiles()) {
+
+            g2d.drawImage(missile.getImage(), missile.getX(), missile.getY(), this);
+
+            // Destroy the beam if it's out of bounds
+
+
+        }
+
+
+
+        if (gameStart && player.getHp() > 0) {
+
+            // ENEMY
+            for (Enemy enemy : list_of_enemies) {
+
+                checkPlayerEnemyDistance(enemy);
+                enemy.updateImageByDebuff();
+                enemy.moveAccordingToBehaviour();   // this will make the ENEMY move in the right direction , according
+                // to its current BEHAVIOUR
+
+
+                enemy.attackThePlayer(player.getX() + 35, player.getY() + 35);      // PLAYER's central variables
+
+                enemy.move();
+                g2d.drawImage(enemy.getImage(), enemy.getX(), enemy.getY(), this);
+            }
+
+            // ENEMY BULLETS
+            ArrayList<EnemyBullet> toRemoveBullets = new ArrayList<>();
+            for (Enemy minion : list_of_enemies) {
+                for (EnemyBullet bullet : minion.getList_bullets()) {
+
+                    bullet.move();
+                    g2d.drawImage(bullet.getImage(), bullet.getX(), bullet.getY(), this);
+
+                    // Destroy the beam if it's out of bounds
+                    if ((bullet.getY() <= 0) || (bullet.getY() >= 530) || (bullet.getX() <= 0) || (bullet.getX() >= 820))
+                        toRemoveBullets.add(bullet);
+                }
+
+                minion.getList_bullets().removeAll(toRemoveBullets);
+            }
+
+
+            // SENTRY
+            for (Sentry sentry : list_of_sentries) {
+
+                sentry.updateImageByDebuff();
+                checkPlayerSentryDistance(sentry);
+                sentry.attackThePlayer(player.getX() + 35, player.getY() + 35);     // PLAYER's central variables
+
+                g2d.drawImage(sentry.getImage(), sentry.getX(), sentry.getY(), this);
+            }
+
+            // SENTRY BULLETS
+            ArrayList<EnemyBullet> toRemoveSentryBullets = new ArrayList<>();
+            for (Sentry sentry : list_of_sentries) {
+                for (EnemyBullet bullet : sentry.getList_bullets()) {
+
+                    bullet.move();
+                    g2d.drawImage(bullet.getImage(), bullet.getX(), bullet.getY(), this);
+
+                    // Destroy the beam if it's out of bounds
+                    if ((bullet.getY() <= 0) || (bullet.getY() >= 530) || (bullet.getX() <= 0) || (bullet.getX() >= 820))
+                        toRemoveSentryBullets.add(bullet);
+                }
+
+                sentry.getList_bullets().removeAll(toRemoveSentryBullets);
+            }
+
+            // BOSS BULLETS
+            ArrayList<EnemyBullet> toRemoveBossBullets = new ArrayList<>();
+            for (EnemyBullet bullet : boss.getListBullets()) {
+
+                bullet.move();
+                g2d.drawImage(bullet.getImage(), bullet.getX(), bullet.getY(), this);
+
+                if ((bullet.getY() <= 0) || (bullet.getY() >= 500) || (bullet.getX() <= 0) || (bullet.getX() >= 790))
+                    toRemoveBossBullets.add(bullet);
+            }
+
+            boss.getListBullets().removeAll(toRemoveBossBullets);
+        }
+
+            // BOSS
+
+                if (boss != null)
+                    g2d.drawImage(boss.getImage(), boss.getX(), boss.getY(), this);
+
+
+
+
+
+
+
+    // BEGINNING SCREEN
+        if (!gameStart) {
+        g2d.drawImage(beginningScreen, 0, 20, this);
+    }
+
+
+    // WINNING SCREEN
+        if (player.getHp() > 0 && boss.getHP() <= 0) {
+        playerController = false;
+        player.setPlayerController(false);
+        g2d.drawImage(winningScreen, 200, 250, this);
+    }
+
+
+    // GAME OVER SCREEN
+        if (player.getHp() <= 0) {
+        playerController = false;
+        player.setPlayerController(false);
+        g2d.drawImage(gameOverScreen, 0, 0, this);
+    }
+
+
+        g.dispose();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        repaint();
+    }
+
+
+
+    private class KeyboardAdapter extends KeyAdapter {
+
+        @Override
+        public void keyPressed (KeyEvent e) {
+
+            try {
+                player.keyPressed(e);
+
+                // in the beginning of the game
+                if (!gameStart) {
+                    int code = e.getKeyCode();
+
+                    if (code == KeyEvent.VK_ENTER) {        // if the user presses 'Enter'
+                        gameStart = true;                   // the game starts
+                        playerController = true;            // and the user can control the character
+                        player.setPlayerController(true);
+                    }
+                }
+
+
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        }
+
+        @Override
+        public void keyReleased (KeyEvent e) {
+
+            player.keyReleased(e);
+        }
+    }
+}
