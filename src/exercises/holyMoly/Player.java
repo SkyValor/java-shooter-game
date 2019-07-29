@@ -1,4 +1,4 @@
-package game;
+package exercises.holyMoly.game;
 
 import javax.swing.*;
 import java.awt.*;

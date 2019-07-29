@@ -1,11 +1,11 @@
-package game;
+package exercises.holyMoly.game;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class BazookaBeam extends Thread{
+public class MachineGunBeam extends Thread {
 
     private int x, y;
     private final int BULLET_SPEED;
@@ -13,59 +13,53 @@ public class BazookaBeam extends Thread{
     private Image image;
     private Rectangle rectangle;
 
-    public BazookaBeam(String _direction, int player_x, int player_y) {
+    public MachineGunBeam(String _direction, int player_x, int player_y) {
 
-        this.direction = _direction;
 
-        BULLET_SPEED = 3;
+         direction = _direction ;
 
-        ImageIcon imgIcon;
+        BULLET_SPEED = 5;
+
         switch (direction) {
 
             case "Up":
                 this.x = player_x + 41;
                 this.y = player_y;
-
-                imgIcon = new ImageIcon("src//Img//WaterBazookaBeam_Up.png");
-
                 break;
 
             case "Down":
                 this.x = player_x + 28;
                 this.y = player_y + 70;
-
-                imgIcon = new ImageIcon("src//Img//WaterBazookaBeam_Down.png");
                 break;
 
             case "Right":
                 this.x = player_x + 70;
                 this.y = player_y + 41;
-
-                imgIcon = new ImageIcon("src//Img//WaterBazookaBeam_Right.png");
                 break;
 
             default:
                 this.x = player_x;
                 this.y = player_y + 28;
-
-                imgIcon = new ImageIcon("src//Img//WaterBazookaBeam_Left.png");
         }
+
+        rectangle = new Rectangle(this.x, this.y, 14, 14);
+
+        ImageIcon imgIcon = new ImageIcon("src//Img//WaterMGunBeam.png");
         image = imgIcon.getImage();
-        rectangle = new Rectangle(this.x, this.y, imgIcon.getIconWidth(), imgIcon.getIconHeight());
+
+
     }
 
 
     public int getX() { return this.x; }
     public int getY() { return this.y; }
     public Image getImage() { return this.image; }
+    public Rectangle getRectangle() {return this.rectangle;}
 
-    public Rectangle getRectangle() {
-        return rectangle;
-    }
 
     public boolean move() {
 
-        switch (direction) {
+        switch (this.direction) {
 
             case "Up":
                 this.y -= BULLET_SPEED;
@@ -85,10 +79,11 @@ public class BazookaBeam extends Thread{
             default:
                 this.x -= BULLET_SPEED;
                 this.rectangle.translate(-BULLET_SPEED, 0);
-        }
 
+        }
         return true;
     }
+
 
     @Override
     public void run() {
@@ -96,7 +91,7 @@ public class BazookaBeam extends Thread{
         switch (direction) {
 
             case "Up":
-                while (y >= 0) {
+                while (y >= -100) {
                     this.move();
 
                     try {
@@ -132,7 +127,7 @@ public class BazookaBeam extends Thread{
                 break;
 
             default:
-                while (x >= 0) {
+                while (x >= -100) {
                     this.move();
 
                     try {
@@ -142,7 +137,5 @@ public class BazookaBeam extends Thread{
                     }
                 }
         }
-
-        System.out.println("Exit Thread.");
     }
 }

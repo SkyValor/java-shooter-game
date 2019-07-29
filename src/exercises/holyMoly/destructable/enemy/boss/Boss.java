@@ -1,100 +1,93 @@
-package game;
+package exercises.holyMoly.destructable.enemy.boss;
 
+
+import exercises.holyMoly.destructable.enemy.AbstractEnemy;
+import exercises.holyMoly.destructable.enemy.AbstractEnemyBullet;
+import exercises.holyMoly.destructable.enemy.EnemyBullet;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 
-public class Boss {
+public class Boss extends AbstractEnemy {
 
-    private int x, y;                                       // position variables
-    private int hp;                                         // life points
+    private HashMap<String, Point> wayPoints;
+    private Point curWayPoint;
 
-    private Image image;                                    // BOSS's image to be rendered
-
-    private Rectangle rectangle;                            // Rectangle for collision
-
-    private ArrayList<Waypoint> waypoints;                  // contains the waypoints for the BOSS to teleport to
-    private Waypoint currentWaypoint;                       // BOSS's current waypoint
-
-    private ArrayList<String> directions;                   // contains directions for bullet shooting
-    private ArrayList<EnemyBullet> List_of_bullets;         // contains the access to all bullets still alive
+    private List<EnemyBullet> bullets;
 
     private boolean isActive;                               // variable to make BOSS wait for a specific time
     private boolean isStartingActive;                       // BOSS does not initiate combat until this is true
     private boolean pastHalf;                               // is true after BOSS awaits for a half second
     private boolean pastTeleport;                           // is true after BOSS has teleported. Happens when BOSS is 50%- HP
 
-
-
     public Boss() {
 
-        this.x = 358;   // position X for Waypoint "Center"
-        this.y = 223;   // position Y for Waypoint "Center"
+        this.x = 358;   // position X for WayPoint "Center"
+        this.y = 223;   // position Y for WayPoint "Center"
         hp = 2000;
 
-        rectangle = new Rectangle();
+        // create the list and add all the WayPoints
+        wayPoints = new HashMap<>();
 
+        wayPoints.put("Northwest", new Point(200, 75));
+        wayPoints.put("Northeast", new Point(530, 75));
+        wayPoints.put("Southwest", new Point(200, 371));
+        wayPoints.put("Southeast", new Point(530, 371));
+        wayPoints.put("West",      new Point(105, 223));
+        wayPoints.put("Center",    new Point(358, 223));
+        wayPoints.put("East",      new Point(645, 223));
 
-        // create the list and add all the Waypoints
-        waypoints = new ArrayList<>();
-        waypoints.add(new Waypoint("Northwest", 200, 75));
-        waypoints.add(new Waypoint("Northeast", 530, 75));
-        waypoints.add(new Waypoint("Southwest", 200, 371));
-        waypoints.add(new Waypoint("Southeast", 530, 371));
-        waypoints.add(new Waypoint("West",      105, 223));
-        waypoints.add(new Waypoint("Center",    358, 223));
-        waypoints.add(new Waypoint("East",      645, 223));
+        curWayPoint = wayPoints.get("Center");
 
-        currentWaypoint = waypoints.get(5);     // Waypoint "Center"
+        bullets = new LinkedList<>();
 
-        directions = new ArrayList<>();
-        directions.add("Up");
-        directions.add("Right");
-        directions.add("Down");
-        directions.add("Left");
-
-        List_of_bullets = new ArrayList<>();
         isActive = false;
         isStartingActive = false;
         pastHalf = false;
         pastTeleport = false;
     }
 
-    public int getX()               {return x;}
-    public int getY()               {return y;}
-    private void setX(int x)        {this.x = x;}
-    private void setY(int y)        {this.y = y;}
+    public boolean getStartingActive() {
+        return isStartingActive;
+    }
 
-    public int getHP()              {return this.hp;}
-    public void setHP(int sumDif)   {hp += sumDif;}
+    public boolean getActive() {
+        return isActive;
+    }
 
-    public Image getImage()         {return image;}
+    public void setActive() {
+        isActive = true;
+    }
 
-    public Rectangle getRectangle() {return rectangle;}
+    public boolean getPastHalf() {
+        return pastHalf;
+    }
 
-    public boolean getStartingActive()              {return this.isStartingActive;}
+    public boolean getPastTeleport() {
+        return pastTeleport;
+    }
 
-    public boolean getActive()                      {return this.isActive;}
-    public void setActive()                         {isActive = true;}
-    public boolean getPastHalf() {return this.pastHalf;}
+    public void setPastTeleport(boolean pastTeleport) {
+        this.pastTeleport = pastTeleport;
+    }
 
+    public void activatePastHalf(boolean trueFalse) {
+        this.pastHalf = trueFalse;
+    }
 
-    public boolean getPastTeleport() {return pastTeleport;}
+    private void setCurrentWayPoint(Point newWayPoint)   {
+        curWayPoint = newWayPoint;
+    }
 
-    public void setPastTeleport(boolean pastTeleport) {this.pastTeleport = pastTeleport;}
-
-    public void activatePastHalf(boolean trueFalse) {this.pastHalf = trueFalse;}
-
-    private void setCurrentWaypoint(Waypoint newWaypoint)   {this.currentWaypoint = newWaypoint;}
-
-    public ArrayList<EnemyBullet> getListBullets()          {return this.List_of_bullets;}
-
+    public List<EnemyBullet> getBullets() {
+        return bullets;
+    }
 
     // when the BOSS commences battle , activate the boolean and create the real Rectangle
     public void commenceBattle()  {
-        this.isStartingActive = true;
+        isStartingActive = true;
 
         ImageIcon imgIcon = new ImageIcon("src//Img//enemy//bossFullHP.png");
         image = imgIcon.getImage();
@@ -106,7 +99,7 @@ public class Boss {
     // method that makes the BOSS pause all acting for 2 seconds
     public void wait2Seconds() {
 
-        this.isActive = false;
+        isActive = false;
 
         // isActive is true after 2 seconds
         new java.util.Timer().schedule(
@@ -121,8 +114,8 @@ public class Boss {
     // method that makes the BOSS pause all acting for 0.5 seconds
     public void waitHalfSecond() {
 
-        this.isActive = false;
-        this.pastHalf = false;
+        isActive = false;
+        pastHalf = false;
 
         // isActive is true after 0.5 seconds
         new java.util.Timer().schedule(
@@ -153,7 +146,7 @@ public class Boss {
         setY(waypoints.get(randomIndex).getY());
         this.rectangle.setLocation(this.x, this.y);
 
-        setCurrentWaypoint(waypoints.get(randomIndex)); // update currentWaypoint
+        setCurrentWayPoint(waypoints.get(randomIndex)); // update currentWaypoint
     }
 
 
@@ -184,10 +177,10 @@ public class Boss {
 
             for (int i = 1; i <= 4; i++) {       // loop for the 4 bullets to be spawned
 
-                List_of_bullets.add(new EnemyBullet(this.x, this.y, direction, this.hp, i));
-                List_of_bullets.add(new EnemyBullet(this.x, this.y, direction, this.hp, i));
-                List_of_bullets.add(new EnemyBullet(this.x, this.y, direction, this.hp, i));
-                List_of_bullets.add(new EnemyBullet(this.x, this.y, direction, this.hp, i));
+                bullets.add(new AbstractEnemyBullet(this.x, this.y, direction, this.hp, i));
+                bullets.add(new AbstractEnemyBullet(this.x, this.y, direction, this.hp, i));
+                bullets.add(new AbstractEnemyBullet(this.x, this.y, direction, this.hp, i));
+                bullets.add(new AbstractEnemyBullet(this.x, this.y, direction, this.hp, i));
             }
         }
     }

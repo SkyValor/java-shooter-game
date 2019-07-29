@@ -1,9 +1,11 @@
-package game;
+package exercises.holyMoly.game;
+
+import exercises.holyMoly.destructable.Destructable;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Crate {
+public class Crate implements Destructable {
 
     private int tag;
     private int x, y;

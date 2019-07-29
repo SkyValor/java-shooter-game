@@ -1,4 +1,7 @@
-package game;
+package exercises.holyMoly.game;
+
+import exercises.holyMoly.destructable.enemy.Enemy;
+import exercises.holyMoly.destructable.enemy.sentry.Sentry;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -83,70 +86,6 @@ public class Game extends JPanel implements ActionListener {
         LIST_of_SPIKES = new ArrayList<>();
 
 
-
-
-        // nivel 1
-        LIST_of_ENEMIES.add(new Enemy("Down", 30, 150, 1, 1));
-        LIST_of_ENEMIES.get(0).addBehaviour("UpDown",    50);
-        LIST_of_ENEMIES.get(0).addBehaviour("DownRight", 210);
-        LIST_of_ENEMIES.get(0).addBehaviour("RightLeft", 245);
-        LIST_of_ENEMIES.get(0).addBehaviour("LeftUp",    30);
-
-        LIST_of_ENEMIES.add(new Enemy("Up", 410, 290, 1, 0));
-        LIST_of_ENEMIES.get(1).addBehaviour("UpDown",    150);
-        LIST_of_ENEMIES.get(1).addBehaviour("DownRight", 460);
-        LIST_of_ENEMIES.get(1).addBehaviour("RightUp",   600);
-        LIST_of_ENEMIES.get(1).addBehaviour("UpDown",    30);
-        LIST_of_ENEMIES.get(1).addBehaviour("DownLeft",  460);
-        LIST_of_ENEMIES.get(1).addBehaviour("LeftUp",    410);
-
-        LIST_of_ENEMIES.add(new Enemy("Down", 720, 135, 1, 1));
-        LIST_of_ENEMIES.get(2).addBehaviour("UpDown",    40);
-        LIST_of_ENEMIES.get(2).addBehaviour("DownUp",    185);
-
-        //nivel 2
-        LIST_of_ENEMIES.add(new Enemy("Up", 505, 400, 2, 0));
-        LIST_of_ENEMIES.get(3).addBehaviour("UpDown",    280);
-        LIST_of_ENEMIES.get(3).addBehaviour("DownUp",    450);
-
-        LIST_of_ENEMIES.add(new Enemy("Down", 40, 220, 2, 1));
-        LIST_of_ENEMIES.get(4).addBehaviour("UpDown",    35);
-        LIST_of_ENEMIES.get(4).addBehaviour("DownUp",    450);
-
-        LIST_of_ENEMIES.add(new Enemy("Right", 255, 35, 2, 1));
-        LIST_of_ENEMIES.get(5).addBehaviour("UpRight",   35);
-        LIST_of_ENEMIES.get(5).addBehaviour("RightLeft", 630);
-        LIST_of_ENEMIES.get(5).addBehaviour("LeftDown",  180);
-        LIST_of_ENEMIES.get(5).addBehaviour("DownUp",    190);
-
-        LIST_of_ENEMIES.add(new Enemy("Left", 570, 200, 2, 2));
-        LIST_of_ENEMIES.get(6).addBehaviour("UpDown",    105);
-        LIST_of_ENEMIES.get(6).addBehaviour("DownLeft",  200);
-        LIST_of_ENEMIES.get(6).addBehaviour("LeftRight", 560);
-        LIST_of_ENEMIES.get(6).addBehaviour("RightUp",   630);
-
-        // nivel 3
-        LIST_of_ENEMIES.add(new Enemy("Left", 250, 465, 3, 1));
-        LIST_of_ENEMIES.get(7).addBehaviour("RightLeft", 480 );
-        LIST_of_ENEMIES.get(7).addBehaviour("LeftRight", 210);
-
-        LIST_of_ENEMIES.add(new Enemy("Left", 100, 225, 3, 1));
-        LIST_of_ENEMIES.get(8).addBehaviour("RightLeft", 280);
-        LIST_of_ENEMIES.get(8).addBehaviour("LeftRight", 115);
-
-        LIST_of_ENEMIES.add(new Enemy("Down", 420, 230, 3, 1));
-        LIST_of_ENEMIES.get(9).addBehaviour("UpDown",    140);
-        LIST_of_ENEMIES.get(9).addBehaviour("DownUp",    280);
-
-        LIST_of_ENEMIES.add(new Enemy("Up", 760, 250, 3, 1));
-        LIST_of_ENEMIES.get(10).addBehaviour("DownUp",   370);
-        LIST_of_ENEMIES.get(10).addBehaviour("UpLeft",   50);
-        LIST_of_ENEMIES.get(10).addBehaviour("LeftDown", 535);
-        LIST_of_ENEMIES.get(10).addBehaviour("DownUp",   460);
-        LIST_of_ENEMIES.get(10).addBehaviour("UpRight",  50);
-        LIST_of_ENEMIES.get(10).addBehaviour("RightDown",760);
-
-
         //sentries
 
         // nivel 1
@@ -165,75 +104,6 @@ public class Game extends JPanel implements ActionListener {
         LIST_of_SENTRIES.add(new Sentry(760, 445, 3, "Vertical"));
 
 
-        // walls
-
-        // nivel 1
-        LIST_of_WALLS.add(new Wall(23,  297, 300, 20,  1));
-        LIST_of_WALLS.add(new Wall(91,  396, 57,  20,  1));
-        LIST_of_WALLS.add(new Wall(128, 416, 20,  111, 1));
-        LIST_of_WALLS.add(new Wall(136, 131, 277, 20,  1));
-        LIST_of_WALLS.add(new Wall(393, 151, 20,  376, 1));
-        LIST_of_WALLS.add(new Wall(472, 289, 120, 20,  1));
-        LIST_of_WALLS.add(new Wall(472, 309, 20,  112, 1));
-        LIST_of_WALLS.add(new Wall(572, 318, 20,  103, 1));
-        LIST_of_WALLS.add(new Wall(683, 22,  20,  270, 1));
-        LIST_of_WALLS.add(new Wall(683, 272, 87,  20,  1));
-        LIST_of_WALLS.add(new Wall(0,   -23, 726, 45,  1));
-        LIST_of_WALLS.add(new Wall(0,   -23, 23,  573, 1));
-        LIST_of_WALLS.add(new Wall(0,   527, 828, 23,  1));
-        LIST_of_WALLS.add(new Wall(804, -23, 24,  45,  1));
-        LIST_of_WALLS.add(new Wall(828, -23, 22,  573, 1));
-
-        // nivel 2
-        LIST_of_WALLS.add(new Wall(658, 370, 20,  157, 2));
-        LIST_of_WALLS.add(new Wall(351, 284, 20,  161, 2));
-        LIST_of_WALLS.add(new Wall(104, 264, 724, 20,  2));
-        LIST_of_WALLS.add(new Wall(377, 112, 20,  152, 2));
-        LIST_of_WALLS.add(new Wall(377, 112, 262, 20,  2));
-        LIST_of_WALLS.add(new Wall(619, 112, 20,  99,  2));
-        LIST_of_WALLS.add(new Wall(448, 191, 191, 20,  2));
-        LIST_of_WALLS.add(new Wall(694, 78,  134, 20,  2));
-        LIST_of_WALLS.add(new Wall(694, 152, 134, 20,  2));
-        LIST_of_WALLS.add(new Wall(0,   0,   850, 22,  2));
-        LIST_of_WALLS.add(new Wall(0,   22,  23,  528, 2));
-        LIST_of_WALLS.add(new Wall(0,   527, 726, 45,  2));
-        LIST_of_WALLS.add(new Wall(804, 527, 24,  45,  2));
-        LIST_of_WALLS.add(new Wall(828, 22,  45,  76,  2));
-        LIST_of_WALLS.add(new Wall(828, 152, 22,  398, 2));
-
-        // nivel 3
-        LIST_of_WALLS.add(new Wall(22,  187, 246, 19,  3));
-        LIST_of_WALLS.add(new Wall(22,  345, 491, 19,  3));
-        LIST_of_WALLS.add(new Wall(272, 21,  19,  115, 3));
-        LIST_of_WALLS.add(new Wall(291, 116, 160, 20,  3));
-        LIST_of_WALLS.add(new Wall(494, 117, 19,  247, 3));
-        LIST_of_WALLS.add(new Wall(341, 201, 76,  90,  3));
-        LIST_of_WALLS.add(new Wall(601, 150, 148, 271, 3));
-        LIST_of_WALLS.add(new Wall(101, 259, 19,  86,  3));
-        LIST_of_WALLS.add(new Wall(0,   0,   22,  97,  3));
-        LIST_of_WALLS.add(new Wall(0,   0,   850, 21,  3));
-        LIST_of_WALLS.add(new Wall(0,   152, 22,  419, 3));
-        LIST_of_WALLS.add(new Wall(22,  527, 28,  44,  3));
-        LIST_of_WALLS.add(new Wall(132, 527, 718, 44,  3));
-        LIST_of_WALLS.add(new Wall(827, 0,   23,  517, 3));
-
-        // nivel 4
-        LIST_of_WALLS.add(new Wall(90,  130, 28,  15,  4));
-        LIST_of_WALLS.add(new Wall(240, 336, 28,  33,  4));
-        LIST_of_WALLS.add(new Wall(90,  425, 28,  33,  4));
-        LIST_of_WALLS.add(new Wall(240, 177, 28,  33,  4));
-        LIST_of_WALLS.add(new Wall(394, 101, 28,  33,  4));
-        LIST_of_WALLS.add(new Wall(394, 421, 28,  33,  4));
-        LIST_of_WALLS.add(new Wall(563, 177, 28,  33,  4));
-        LIST_of_WALLS.add(new Wall(563, 328, 28,  33,  4));
-        LIST_of_WALLS.add(new Wall(697, 113, 28,  33,  4));
-        LIST_of_WALLS.add(new Wall(697, 430, 28,  33,  4));
-        LIST_of_WALLS.add(new Wall(0,   0,   850, 22,  4));
-        LIST_of_WALLS.add(new Wall(0,   0,   22,  550, 4));
-        LIST_of_WALLS.add(new Wall(0,   528, 850, 22,  4));
-        LIST_of_WALLS.add(new Wall(827, 22,  23,  528, 4));
-
-
         //crates
 
         // nivel 1
@@ -246,7 +116,7 @@ public class Game extends JPanel implements ActionListener {
 
         // nivel 2
         LIST_of_CRATES.add(new Crate(171, 489, 2));
-        LIST_of_CRATES.add(new Crate(400, 133, 2));
+        LIST_of_CRATES.add(new exercises.holyMoly.game.Crate(400, 133, 2));
         LIST_of_CRATES.add(new Crate(447, 133, 2));
         LIST_of_CRATES.add(new Crate(494, 156, 2));
         LIST_of_CRATES.add(new Crate(584, 156, 2));
@@ -310,7 +180,7 @@ public class Game extends JPanel implements ActionListener {
     // colisao com paredes e crates
     private boolean isMovementPossible() {
 
-        for (Wall wall : list_of_walls) {   // checks all WALLS
+        for (exercises.holyMoly.game.Wall wall : list_of_walls) {   // checks all WALLS
 
                 if (wall.getRectangle().intersects(player.getTranslatedRectangle()))
                     return false;
@@ -1053,9 +923,6 @@ public class Game extends JPanel implements ActionListener {
             managerAIBoss();
 
 
-
-
-
         // SPIKES
         for (Spikes spikes : list_of_spikes) {
 
@@ -1103,10 +970,7 @@ public class Game extends JPanel implements ActionListener {
 
             g2d.drawImage(beam.getImage(), beam.getX(), beam.getY(), this);
 
-
-
         }
-
 
 
         // MISSILES BULLETS
@@ -1117,10 +981,7 @@ public class Game extends JPanel implements ActionListener {
 
             // Destroy the beam if it's out of bounds
 
-
         }
-
-
 
         if (gameStart && player.getHp() > 0) {
 
@@ -1247,12 +1108,12 @@ public class Game extends JPanel implements ActionListener {
             try {
                 player.keyPressed(e);
 
-                // in the beginning of the game
+                // in the beginning of the exercises.holyMoly.game
                 if (!gameStart) {
                     int code = e.getKeyCode();
 
                     if (code == KeyEvent.VK_ENTER) {        // if the user presses 'Enter'
-                        gameStart = true;                   // the game starts
+                        gameStart = true;                   // the exercises.holyMoly.game starts
                         playerController = true;            // and the user can control the character
                         player.setPlayerController(true);
                     }
