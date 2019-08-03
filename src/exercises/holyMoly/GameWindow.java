@@ -1,21 +1,17 @@
-package exercises.holyMoly.game;
+package exercises.holyMoly;
 
 import javax.swing.*;
 import java.awt.*;
 
-
 public class GameWindow extends JFrame {
 
     public static void main (String[] Args){
-
         new GameWindow();
-
     }
 
+    private GameWindow(){
 
-    public GameWindow(){
-
-            super.add(new Game());
+        super.add(new Game());
         super.setTitle("HolyMoly");
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setSize(850,575);
@@ -23,13 +19,6 @@ public class GameWindow extends JFrame {
         super.setLocationRelativeTo(null);
         super.setResizable(false);
         super.setVisible(true);
-
     }
-
-
-
-
-
-
 }
 

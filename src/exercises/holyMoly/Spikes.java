@@ -1,42 +1,46 @@
-package exercises.holyMoly.game;
+package exercises.holyMoly;
 
-import javax.swing.*;
+import exercises.holyMoly.utils.managers.AssetManager;
+
 import java.awt.*;
 
 public class Spikes {
 
-    private final int TAG;
-
-    private int x, y;
+    private boolean visible;
+    private Rectangle collider;
     private Image image;
-    private Rectangle rectangle;
-    private boolean isVisible;
 
+    public Spikes(int positionX, int positionY) {
 
+        visible = false;
 
-    public Spikes(int _x, int _y, int _tag) {
+        int colliderBounds = 37;
+        collider = new Rectangle(positionX, positionY, colliderBounds, colliderBounds);
 
-        this.TAG = _tag;
-
-        this.x = _x;
-        this.y = _y;
-        this.isVisible = false;
-
-        ImageIcon imgIcon = new ImageIcon("src//Img//spickes.png");
-        image = imgIcon.getImage();
-
-        rectangle = new Rectangle(_x, _y, imgIcon.getIconWidth(), imgIcon.getIconHeight());
+        image = AssetManager.loadSpikesImage();
     }
 
+    boolean isVisible() {
+        return visible;
+    }
 
-    public int getTAG() {return TAG;}
+    void turnVisible() {
+        visible = true;
+    }
 
-    public int getX() {return x;}
-    public int getY() {return y;}
-    public Image getImage() {return image;}
+    int getX() {
+        return collider.x;
+    }
 
-    public Rectangle getRectangle() {return rectangle;}
+    int getY() {
+        return collider.y;
+    }
 
-    public boolean getVisible() {return isVisible;}
-    public void setVisible() {this.isVisible = true;}
+    Rectangle getCollider() {
+        return collider;
+    }
+
+    Image getImage() {
+        return image;
+    }
 }
